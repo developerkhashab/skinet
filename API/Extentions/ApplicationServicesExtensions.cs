@@ -1,5 +1,7 @@
 using System.Linq;
 using API.Errors;
+using API.Services;
+using API.Services.Interfaces;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +14,7 @@ namespace API.Extentions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductService, ProductService>();
             services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
 
             // add configurations for default return error message

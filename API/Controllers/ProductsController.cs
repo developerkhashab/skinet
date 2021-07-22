@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Dtos;
 using API.Errors;
+using API.Services.Interfaces;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
@@ -16,29 +17,29 @@ namespace API.Controllers
     {
         private readonly IGenericRepository<Product> _productsRepo;
         private readonly IMapper _mapper;
-        public ProductsController(IGenericRepository<Product> productsRepo, IMapper mapper)
+        private readonly IProductService _productService;
+        public ProductsController(IGenericRepository<Product> productsRepo, IMapper mapper, IProductService productService)
         {
+            _productService = productService;
             _mapper = mapper;
             _productsRepo = productsRepo;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts()
+        public async Task<ActionResult<IReadOnlyList<ProductToReturnView>>> GetProducts(string sort)
         {
-            var spec = new ProductsWithTypesAndBrandsSpecifications();
-            var products = await _productsRepo.ListAsync(spec);
-            return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products));
+            var products = await _productService.GetProducts(sort);
+            return Ok(products);
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
+        public async Task<ActionResult<ProductToReturnView>> GetProduct(int id)
         {
-            var spec = new ProductsWithTypesAndBrandsSpecifications(id);
-            var product = await _productsRepo.GetEntityWithSpec(spec);
-            if(product == null ) return NotFound(new ApiResponse(404)); 
-            return _mapper.Map<Product, ProductToReturnDto>(product);
+            var product = await _productService.GetProduct(id);
+            if (product == null) return NotFound(new ApiResponse(404));
+            return Ok(product);
         }
     }
 }

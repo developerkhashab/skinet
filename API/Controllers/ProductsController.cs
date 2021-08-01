@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Dtos;
 using API.Errors;
+using API.Helpers;
 using API.Services.Interfaces;
 using AutoMapper;
 using Core.Entities;
@@ -26,9 +27,9 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnView>>> GetProducts(string sort)
+        public async Task<ActionResult<Pagination<ProductToReturnView>>> GetProducts([FromQuery]ProductSpecParams productParams)
         {
-            var products = await _productService.GetProducts(sort);
+            var products = await _productService.GetProducts(productParams);
             return Ok(products);
         }
 

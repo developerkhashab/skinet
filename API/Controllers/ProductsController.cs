@@ -17,12 +17,10 @@ namespace API.Controllers
     public class ProductsController : BaseApiController
     {
         private readonly IGenericRepository<Product> _productsRepo;
-        private readonly IMapper _mapper;
         private readonly IProductService _productService;
-        public ProductsController(IGenericRepository<Product> productsRepo, IMapper mapper, IProductService productService)
+        public ProductsController(IGenericRepository<Product> productsRepo, IProductService productService)
         {
             _productService = productService;
-            _mapper = mapper;
             _productsRepo = productsRepo;
         }
 
